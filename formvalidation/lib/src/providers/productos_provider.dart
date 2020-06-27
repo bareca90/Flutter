@@ -3,6 +3,7 @@
 //realiza las interacciones directas con la base de datos
 import 'dart:convert';
 //import 'dart:html';
+import 'package:formvalidation/src/preferencias_usuario/preferencias_usuario.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:formvalidation/src/models/producto_model.dart';
 import 'package:http/http.dart' as http;
@@ -12,9 +13,10 @@ import 'package:mime_type/mime_type.dart';
 //import 'package:mime_type/mime_type.dart';
 class ProductosProvider {
   final String _url = 'https://flutter-varios-6da90.firebaseio.com'; //url de la raiz de la base de datos
+  final _prefs = new PreferenciasUsuario();
 
   Future<bool> creatProducto (ProductoModel producto) async {
-    final url = '$_url/productos.json';
+    final url = '$_url/productos.json?auth=${_prefs.token}';
     final response = await http.post(url,body: productoModelToJson(producto));
     final decodeData = json.decode(response.body);
 
@@ -24,7 +26,7 @@ class ProductosProvider {
   }
 
   Future<bool> editarProducto (ProductoModel producto) async {
-    final url = '$_url/productos/${producto.id}.json';
+    final url = '$_url/productos/${producto.id}.json?auth=${_prefs.token}';
     final response = await http.put(url,body: productoModelToJson(producto));
     final decodeData = json.decode(response.body);
 
@@ -34,7 +36,7 @@ class ProductosProvider {
   }
 
   Future<List<ProductoModel>>  cargarProductos () async {
-    final url = '$_url/productos.json';
+    final url = '$_url/productos.json?auth=${_prefs.token}';
     final respuesta = await http.get(url) ;
     final Map<String,dynamic> decodeData = json.decode(respuesta.body);
     final List<ProductoModel> productos = new List();
@@ -52,7 +54,7 @@ class ProductosProvider {
 
   Future<int> borrarProducto(String id)async {
 
-    final url= '$_url/productos/$id.json';
+    final url= '$_url/productos/$id.json?auth=${_prefs.token}';
     final respuesta = await http.delete(url);
 
 
